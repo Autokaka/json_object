@@ -1,6 +1,5 @@
 import 'package:json_object/json_object.dart';
 import 'package:flutter/material.dart';
-import 'package:pretty_json/pretty_json.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -42,13 +41,12 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(10),
         children: [
           /// get list
-          buildDivider(),
           Text(
             "转换成对象后的jsonObject: ",
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(jsonObject.getValue().runtimeType.toString()),
-          Text(prettyJson(jsonObject.getValue(), indent: 4)),
+          Text(jsonObject.encodePretty(indent: 4)),
 
           /// get map
           buildDivider(),
@@ -57,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(jsonObject[0].getValue().runtimeType.toString()),
-          Text(prettyJson(jsonObject[0].getValue(), indent: 4)),
+          Text(jsonObject[0].encodePretty(indent: 4)),
 
           /// get url
           buildDivider(),
@@ -66,12 +64,12 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(jsonObject[0].url.getValue().runtimeType.toString()),
-          Text(prettyJson(jsonObject[0].url.getValue(), indent: 4)),
+          Text(jsonObject[0].url.encodePretty(indent: 4)),
           ElevatedButton(
             onPressed: () => setState(
               () => jsonObject[0].url = jsonObject[1].url.getValue(),
             ),
-            child: Text("把百度的链接改成谷歌的"),
+            child: Text("把百度的url改成谷歌的url"),
           ),
 
           /// get name
@@ -81,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(jsonObject[0].name.getValue().runtimeType.toString()),
-          Text(prettyJson(jsonObject[0].name.getValue(), indent: 4)),
+          Text(jsonObject[0].name.encodePretty(indent: 4)),
 
           /// get time
           buildDivider(),
@@ -90,12 +88,42 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(jsonObject[0].time.getValue().runtimeType.toString()),
-          Text(prettyJson(jsonObject[0].time.getValue(), indent: 4)),
+          Text(jsonObject[0].time.encodePretty(indent: 4)),
           ElevatedButton(
             onPressed: () => setState(
               () => jsonObject[0].time = 111111111,
             ),
             child: Text("修改jsonObject[0].time为111111111"),
+          ),
+
+          /// add key value pairs using dot operator
+          buildDivider(),
+          Text(
+            "访问jsonObject[1].stars: ",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Text(jsonObject[1].stars.getValue().runtimeType.toString()),
+          Text(jsonObject[1].stars.encodePretty(indent: 4)),
+          ElevatedButton(
+            onPressed: () => setState(
+              () => jsonObject[1].stars = 5,
+            ),
+            child: Text('jsonObject[1].stars = 5'),
+          ),
+
+          /// add key value pairs using add()
+          buildDivider(),
+          Text(
+            "访问jsonObject[0].stars: ",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Text(jsonObject[0].stars.getValue().runtimeType.toString()),
+          Text(jsonObject[0].stars.encodePretty(indent: 4)),
+          ElevatedButton(
+            onPressed: () => setState(
+              () => jsonObject[0].add("stars", 5),
+            ),
+            child: Text('jsonObject[0].add("stars", 5)'),
           ),
         ],
       ),

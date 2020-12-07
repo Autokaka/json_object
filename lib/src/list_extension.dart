@@ -49,4 +49,18 @@ extension _ListExtension on JsonObject {
     _list[index] = value;
     _listen?.call(_list);
   }
+
+  void _listAdd(Object key, Object value) {
+    if (key is! int) {
+      throw _JsonObjectException.methodInvokeException(
+        methodName: "add",
+        innerDataType: _innerDataType,
+        expectedType: "Map",
+      );
+    }
+
+    _list.add(value);
+    _listen?.call(_list);
+    return;
+  }
 }
