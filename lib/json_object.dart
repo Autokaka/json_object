@@ -26,6 +26,15 @@ class JsonObject {
 
   void Function(Object newValue) _listen;
 
+  static bool isEmpty(JsonObject jsonObject) {
+    return jsonObject == null ||
+        jsonObject._map == null &&
+            jsonObject._list == null &&
+            jsonObject._normalValue == null;
+  }
+
+  static bool isNotEmpty(JsonObject jsonObject) => !isEmpty(jsonObject);
+
   /// Creates a dynamic(actually a JsonObject) from json string.
   dynamic fromString(String jsonStr) {
     var decodeResult = json.decode(jsonStr);
