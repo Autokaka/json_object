@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    jsonObject = JsonObject().fromString(jsonStr);
+    jsonObject = JsonObject.fromString(jsonStr);
   }
 
   @override

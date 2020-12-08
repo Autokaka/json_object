@@ -10,50 +10,36 @@ part 'src/exception.dart';
 part 'src/util.dart';
 
 class JsonObject {
-  Invocation _invocation;
-
-  Map _map;
-  bool get isMap => _map != null;
-  List _list;
-  bool get isList => _list != null;
-  Object _normalValue;
-  bool get isNormalValue => _normalValue != null;
-  String get _innerDataType {
-    if (isMap) return _map.runtimeType.toString();
-    if (isList) return _list.runtimeType.toString();
-    return _normalValue.runtimeType.toString();
-  }
-
-  void Function(Object newValue) _listen;
-
-  static bool isEmpty(JsonObject jsonObject) {
-    return jsonObject == null ||
-        jsonObject._map == null &&
-            jsonObject._list == null &&
-            jsonObject._normalValue == null;
-  }
-
-  static bool isNotEmpty(JsonObject jsonObject) => !isEmpty(jsonObject);
+  JsonObject._();
 
   /// Creates a dynamic(actually a JsonObject) from json string.
-  dynamic fromString(String jsonStr) {
-    var decodeResult = json.decode(jsonStr);
+  static dynamic fromString(String jsonStr) {
+    final decodeResult = json.decode(jsonStr);
+    final jsonObject = JsonObject._();
 
-    if (decodeResult is Map) {
-      _map = decodeResult;
-      return this;
-    }
-    if (decodeResult is List) {
-      _list = decodeResult;
-      return this;
-    }
-    _normalValue = decodeResult;
-    return this;
+    if (decodeResult is Map) return jsonObject.._map = decodeResult;
+    if (decodeResult is List) return jsonObject.._list = decodeResult;
+    return jsonObject.._other = decodeResult;
   }
 
   /// Creates a dynamic(actually a JsonObject) that contains
-  /// all the values of the [otherObject].
-  dynamic from(JsonObject otherObject) => fromString(otherObject.encode());
+  /// all the values of the [otherJsonObject].
+  static dynamic from(dynamic otherJsonObject) =>
+      fromString(otherJsonObject.encode());
+
+  Map _map;
+  List _list;
+  dynamic _other;
+  String get _valueType => getValue().runtimeType.toString();
+
+  void Function(dynamic newValue) _listen;
+  void _notify(dynamic newValue) => _listen(newValue);
+
+  static bool isEmpty(JsonObject jsonObject) =>
+      jsonObject == null || jsonObject.getValue() == null;
+  static bool isNotEmpty(JsonObject jsonObject) => !isEmpty(jsonObject);
+
+  Invocation _invocation;
 
   /// This is the core magic of json_object.
   /// It uses [invocation] in [noSuchMethod]
@@ -62,11 +48,11 @@ class JsonObject {
   dynamic noSuchMethod(Invocation invocation) {
     _invocation = invocation;
 
-    if (_isGetMapValue) return _mapValue;
-    if (_isSetMapValue) return _setMapValue();
+    if (isGettingMapValue) return getMapValue();
+    if (isSettingMapValue) return setMapValue();
 
-    if (_isGetListValue) return _listValue;
-    if (_isSetListValue) return _setListValue();
+    if (isGettingListValue) return getListValue();
+    if (isSettingListValue) return setListValue();
 
     throw _JsonObjectException.uncaughtException();
   }
@@ -124,47 +110,47 @@ class JsonObject {
   /// [jsonObject.name]. Also note that you only need to call [getValue()]
   /// at the end of the value, which means you can't use
   /// [jsonObject.getValue().name.getValue()] to get the value.
-  Object getValue() => _JsonObjectUtil(this).getValue();
+  dynamic getValue() => _JsonObjectUtil(this).getValue();
 
-  /// Return index list of [_list] if JsonObject inner value [isList].
+  /// Return index list of [_list] if JsonObject inner value [getValue() is List].
   /// For example, if inner value is `["a", "b", "c"]`, then this method
   /// returns `[0, 1, 2]`.
   ///
-  /// Return [_map.keys] if JsonObject inner value [isMap].
+  /// Return [_map.keys] if JsonObject inner value [getValue() is Map].
   /// For example, if inner value is `{"a": 1, "b": 2, "c": 3}`, then
   /// this method returns `["a", "b", "c"]`.
   ///
-  /// Return [_normalValue.toString().split("")] if
-  /// JsonObject inner value [isNormalValue].
+  /// Return [_other.toString().split("")] if
+  /// JsonObject inner value [_other != null].
   /// For example, if inner value is `"love you"`, then this
   /// method returns `["l", "o", "v", "e", " ", "y", "o", "u"]`
   Iterable get keys => _JsonObjectUtil(this).keys;
 
-  /// Return [_list.length] if JsonObject inner value [isList].
+  /// Return [_list.length] if JsonObject inner value [getValue() is List].
   /// For example, if inner value is `["a", "b", "c"]`, then this method
   /// returns 3.
   ///
-  /// Return [_map.keys.length] if JsonObject inner value [isMap].
+  /// Return [_map.keys.length] if JsonObject inner value [getValue() is Map].
   /// For example, if inner value is `{"a": 1, "b": 2, "c": 3}`, then
   /// this method returns 3, which is the length of [_map.keys],
   /// known as `["a", "b", "c"]`.
   ///
-  /// Return [_normalValue.toString().length] if
-  /// JsonObject inner value [isNormalValue].
+  /// Return [_other.toString().length] if
+  /// JsonObject inner value [_other != null].
   /// For example, if inner value is `"love you"`, then this
   /// method returns 8, which is the length of String `"love you"`.
   int get length => _JsonObjectUtil(this).length;
 
   /// Add a (key, value) pair in [JsonObject].
   ///
-  /// If the inner value [isMap], it adds
+  /// If the inner value [getValue() is Map], it adds
   /// a (key, value) pair in [JsonObject].
   ///
-  /// If the inner value [isList], it adds
+  /// If the inner value [getValue() is List], it adds
   /// the value to `[_list[key]]`, this [key]
   /// here represents [index].
   ///
-  /// If the inner value [isNormalValue], it
+  /// If the inner value [_other != null], it
   /// throws an Exception.
-  void add(Object key, Object value) => _JsonObjectUtil(this).add(key, value);
+  void add(dynamic key, dynamic value) => _JsonObjectUtil(this).add(key, value);
 }

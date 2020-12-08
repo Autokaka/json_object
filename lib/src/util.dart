@@ -4,46 +4,41 @@ extension _JsonObjectUtil on JsonObject {
   String encodePretty({int indent = 2}) {
     var spaces = ' ' * indent;
     var encoder = JsonEncoder.withIndent(spaces);
-    if (isMap) return encoder.convert(_map);
-    if (isList) return encoder.convert(_list);
-    return encoder.convert(_normalValue);
+    if (getValue() is Map) return encoder.convert(_map);
+    if (getValue() is List) return encoder.convert(_list);
+    return encoder.convert(_other);
   }
 
   String encode() {
-    if (isMap) return json.encode(_map);
-    if (isList) return json.encode(_list);
-    return json.encode(_normalValue);
+    if (getValue() is Map) return json.encode(_map);
+    if (getValue() is List) return json.encode(_list);
+    return json.encode(_other);
   }
 
-  Object getValue() {
-    if (isMap) return _map;
-    if (isList) return _list;
-    return _normalValue;
-  }
+  dynamic getValue() => _map ?? _list ?? _other;
 
   Iterable get keys {
-    if (isMap) return _map.keys;
-    if (isList) return List.generate(_list.length, (index) => index);
-    if (isNormalValue) return _normalValue.toString().split("");
-    throw _JsonObjectException.uncaughtException();
+    if (getValue() is Map) return _map.keys;
+    if (getValue() is List)
+      return List.generate(_list.length, (index) => index);
+    return _other.toString().split("");
   }
 
   int get length {
-    if (isList) return _list.length;
-    if (isMap) return _map.keys.length;
-    if (isNormalValue) return _normalValue.toString().length;
-    throw _JsonObjectException.uncaughtException();
+    if (getValue() is List) return _list.length;
+    if (getValue() is Map) return _map.keys.length;
+    return _other.toString().length;
   }
 
-  void add(Object key, Object value) {
-    if (isNormalValue) {
+  void add(dynamic key, dynamic value) {
+    if (_other != null) {
       throw _JsonObjectException.methodInvokeException(
         methodName: "add",
-        innerDataType: _innerDataType,
+        innerDataType: _valueType,
         expectedType: "Map or List",
       );
     }
-    if (isMap) return _mapAdd(key, value);
-    if (isList) return _listAdd(key, value);
+    if (getValue() is Map) return _mapAdd(key, value);
+    if (getValue() is List) return _listAdd(key, value);
   }
 }

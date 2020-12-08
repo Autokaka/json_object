@@ -1,9 +1,9 @@
 part of json_object;
 
 extension _MapExtension on JsonObject {
-  bool get _isGetMapValue => _invocation.isAccessor && _invocation.isGetter;
-  dynamic get _mapValue {
-    if (isList) {
+  bool get isGettingMapValue => _invocation.isAccessor && _invocation.isGetter;
+  dynamic getMapValue() {
+    if (getValue() is List) {
       throw _JsonObjectException.getValueException(
         innerDataType: "List",
         expectedType: "Map",
@@ -16,16 +16,13 @@ extension _MapExtension on JsonObject {
     }
 
     var valueStr = json.encode(_map[key]);
-    var child = JsonObject()
-      .._listen = (newValue) {
-        _map[key] = newValue;
-      };
-    return child.fromString(valueStr);
+    return JsonObject.fromString(valueStr)
+      .._listen = (newValue) => _map[key] = newValue;
   }
 
-  bool get _isSetMapValue => _invocation.isAccessor && _invocation.isSetter;
-  void _setMapValue() {
-    if (isList) {
+  bool get isSettingMapValue => _invocation.isAccessor && _invocation.isSetter;
+  void setMapValue() {
+    if (getValue() is List) {
       throw _JsonObjectException.setValueException(
         innerDataType: "List",
         expectedType: "Map",
@@ -35,14 +32,14 @@ extension _MapExtension on JsonObject {
     var key = _memberNameStr;
     var value = _invocation.positionalArguments.first;
     _map[key] = value;
-    _listen?.call(_map);
+    _notify(_map);
   }
 
-  void _mapAdd(Object key, Object value) {
+  void _mapAdd(dynamic key, dynamic value) {
     if (key is int) {
       throw _JsonObjectException.methodInvokeException(
         methodName: "add",
-        innerDataType: _innerDataType,
+        innerDataType: _valueType,
         expectedType: "List",
       );
     }
@@ -59,6 +56,6 @@ extension _MapExtension on JsonObject {
     }
 
     _map[key] = value;
-    _listen?.call(_map);
+    _notify(_map);
   }
 }
