@@ -172,7 +172,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   json_rpc_2:
     dependency: transitive
     description:
