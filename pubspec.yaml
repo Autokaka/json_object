@@ -1,6 +1,6 @@
 name: json_object
 description: You can use json_object to access a json string just like accessing normal objects without using json_serializable or something like that.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Autokaka/json_object.git
 
 environment:
