@@ -33,7 +33,7 @@ class JsonObject {
   String get _valueType => getValue().runtimeType.toString();
 
   void Function(dynamic newValue) _listen;
-  void _notify(dynamic newValue) => _listen(newValue);
+  void _notify(dynamic newValue) => _listen?.call(newValue);
 
   static bool isEmpty(JsonObject jsonObject) =>
       jsonObject == null || jsonObject.getValue() == null;
