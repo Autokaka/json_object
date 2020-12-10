@@ -53,10 +53,28 @@ extension _ListExtension on JsonObject {
         methodName: "add",
         innerDataType: _valueType,
         expectedType: "Map",
+        suggestion: "This is quite confusing because "
+            "you tried to add all your List elements to a Map.",
       );
     }
 
     _list.add(value);
+    _notify(_list);
+  }
+
+  void _listAddAll(dynamic otherJsonObject) {
+    if (otherJsonObject.getValue() is! List) {
+      throw _JsonObjectException.methodInvokeException(
+        methodName: "addAll",
+        innerDataType: _valueType,
+        expectedType: otherJsonObject.getValue().runtimeType.toString(),
+        suggestion: "This is quite confusing because "
+            "you tried to add all (key, value) pairs in a Map to a List.",
+      );
+    }
+
+    final copyJsonObject = JsonObject.from(otherJsonObject);
+    _list.addAll(copyJsonObject.getValue());
     _notify(_list);
   }
 }

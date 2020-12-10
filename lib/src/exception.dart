@@ -52,18 +52,20 @@ class _JsonObjectException {
     @required String methodName,
     @required String innerDataType,
     @required String expectedType,
+    String suggestion = "",
   }) {
     return standardError(
       "MethodInvokeException. "
-      "Invoking: $methodName in a $innerDataType, "
-      "while this method is available only for $expectedType.",
+      "Invoking: $methodName in a $innerDataType "
+      "by introducing a(n) $expectedType. "
+      "$suggestion.",
     );
   }
 
   static String uncaughtException({String suggestion = ""}) {
     return standardError(
       "UncaughtException. "
-      "$suggestion. "
+      "$suggestion "
       "Please feel free to give an Issue at: "
       "https://github.com/Autokaka/json_object",
     );

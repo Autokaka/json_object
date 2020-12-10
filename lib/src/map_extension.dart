@@ -58,4 +58,18 @@ extension _MapExtension on JsonObject {
     _map[key] = value;
     _notify(_map);
   }
+
+  void _mapAddAll(dynamic otherJsonObject) {
+    if (otherJsonObject.getValue() is! Map) {
+      throw _JsonObjectException.methodInvokeException(
+        methodName: "addAll",
+        innerDataType: _valueType,
+        expectedType: otherJsonObject.getValue().runtimeType.toString(),
+      );
+    }
+
+    final copyJsonObject = JsonObject.from(otherJsonObject);
+    _map.addAll(copyJsonObject.getValue());
+    _notify(_map);
+  }
 }

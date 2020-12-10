@@ -7,7 +7,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var jsonStr = '''[{
+  final jsonStr = '''[{
     "url": "https://baidu.com",
     "name": "Baidu",
     "time": 1234567890
@@ -16,6 +16,12 @@ class _HomePageState extends State<HomePage> {
     "name": "Google",
     "time": 1234567890
   }]''';
+
+  final mapToBeAdded = '''{
+    "weekday": 1,
+    "weather": "good"
+  }''';
+
   var jsonObject;
 
   Widget buildDivider() {
@@ -124,6 +130,41 @@ class _HomePageState extends State<HomePage> {
               () => jsonObject[0].add("stars", 5),
             ),
             child: Text('jsonObject[0].add("stars", 5)'),
+          ),
+
+          /// add `jsonObject[0]` to the normal JsonObject using addAll()
+          buildDivider(),
+          Text(
+            "访问jsonObject: ",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Text(jsonObject.getValue().runtimeType.toString()),
+          Text(jsonObject.encodePretty(indent: 4)),
+          ElevatedButton(
+            onPressed: () => setState(
+              () => jsonObject.addAll(jsonObject),
+            ),
+            child: Text('jsonObject.addAll(jsonObject[0])'),
+          ),
+
+          /// add mapToBeAdded to the normal JsonObject using addAll()
+          buildDivider(),
+          Text(
+            "访问jsonObject: ",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Text(jsonObject.getValue().runtimeType.toString()),
+          Text(jsonObject.encodePretty(indent: 4)),
+          ElevatedButton(
+            onPressed: () => setState(
+              () => jsonObject[0].addAll(
+                JsonObject.fromString(mapToBeAdded),
+              ),
+            ),
+            child: Text(
+              'jsonObject[0].addAll'
+              '(JsonObject.fromString(mapToBeAdded))',
+            ),
           ),
         ],
       ),

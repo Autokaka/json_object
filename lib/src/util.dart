@@ -41,4 +41,16 @@ extension _JsonObjectUtil on JsonObject {
     if (getValue() is Map) return _mapAdd(key, value);
     if (getValue() is List) return _listAdd(key, value);
   }
+
+  void addAll(dynamic otherJsonObject) {
+    if (_other != null) {
+      throw _JsonObjectException.methodInvokeException(
+        methodName: "add",
+        innerDataType: _valueType,
+        expectedType: "Map or List",
+      );
+    }
+    if (getValue() is Map) return _mapAddAll(otherJsonObject);
+    if (getValue() is List) return _listAddAll(otherJsonObject);
+  }
 }

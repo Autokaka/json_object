@@ -153,4 +153,14 @@ class JsonObject {
   /// If the inner value [_other != null], it
   /// throws an Exception.
   void add(dynamic key, dynamic value) => _JsonObjectUtil(this).add(key, value);
+
+  /// Add [otherJsonObject] to [JsonObject].
+  ///
+  /// It uses normal [addAll()] method when inner value
+  /// type is Map or List.
+  ///
+  /// If the inner value is normal value (known as [_other != null]), it
+  /// throws an Exception.
+  void addAll(JsonObject otherJsonObject) =>
+      _JsonObjectUtil(this).addAll(otherJsonObject);
 }
