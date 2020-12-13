@@ -1,10 +1,10 @@
-part of json_object;
+import 'package:flutter/material.dart';
 
-class _JsonObjectException {
-  const _JsonObjectException._();
+class JsonObjectException {
+  const JsonObjectException._();
 
   static String standardError(String message) {
-    return "EasyJson: $message";
+    return "JsonObject: $message";
   }
 
   static String noSuchKeyException({
@@ -12,17 +12,6 @@ class _JsonObjectException {
   }) {
     return standardError(
       "NoSuchKeyException. key: $key",
-    );
-  }
-
-  static String listOutOfRangeException({
-    @required int index,
-    @required int length,
-  }) {
-    return standardError(
-      "ListOutOfRangeException. "
-      "Getting index: $index, "
-      "but list length: $length",
     );
   }
 
@@ -45,20 +34,6 @@ class _JsonObjectException {
       "GetValueException. "
       "Trying to set value in a $innerDataType, "
       "while this `set` method is available only for $expectedType.",
-    );
-  }
-
-  static String methodInvokeException({
-    @required String methodName,
-    @required String innerDataType,
-    @required String expectedType,
-    String suggestion = "",
-  }) {
-    return standardError(
-      "MethodInvokeException. "
-      "Invoking: $methodName in a $innerDataType "
-      "by introducing a(n) $expectedType. "
-      "$suggestion.",
     );
   }
 

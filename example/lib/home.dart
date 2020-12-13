@@ -7,7 +7,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final jsonStr = '''[{
+  var jsonObject = JsonObject.from('''[{
     "url": "https://baidu.com",
     "name": "Baidu",
     "time": 1234567890
@@ -15,27 +15,7 @@ class _HomePageState extends State<HomePage> {
     "url": "https://google.com.hk",
     "name": "Google",
     "time": 1234567890
-  }]''';
-
-  final mapToBeAdded = '''{
-    "weekday": 1,
-    "weather": "good"
-  }''';
-
-  var jsonObject;
-
-  Widget buildDivider() {
-    return Divider(
-      thickness: 1,
-      color: Theme.of(context).primaryColor,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    jsonObject = JsonObject.fromString(jsonStr);
-  }
+  }]''');
 
   @override
   Widget build(BuildContext context) {
@@ -46,125 +26,59 @@ class _HomePageState extends State<HomePage> {
       body: ListView(
         padding: EdgeInsets.all(10),
         children: [
-          /// get list
+          /// encode
           Text(
             "转换成对象后的jsonObject: ",
             style: Theme.of(context).textTheme.headline5,
           ),
-          Text(jsonObject.getValue().runtimeType.toString()),
-          Text(jsonObject.encodePretty(indent: 4)),
+          Text(jsonObject.valueRuntimeType.toString()),
+          Text(JsonObject.encodePretty(jsonObject, indent: 4)),
 
-          /// get map
-          buildDivider(),
+          /// get value
           Text(
-            "访问jsonObject[0]: ",
+            "Get方法测试",
             style: Theme.of(context).textTheme.headline5,
           ),
-          Text(jsonObject[0].getValue().runtimeType.toString()),
-          Text(jsonObject[0].encodePretty(indent: 4)),
+          Text(jsonObject[0].getValue().toString()),
+          Text(jsonObject[0].url.getValue().toString()),
+          Text(jsonObject[0].name.getValue().toString()),
 
-          /// get url
-          buildDivider(),
+          /// set value
           Text(
-            "访问jsonObject[0].url: ",
+            "Set方法测试",
             style: Theme.of(context).textTheme.headline5,
           ),
-          Text(jsonObject[0].url.getValue().runtimeType.toString()),
-          Text(jsonObject[0].url.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject[0].url = jsonObject[1].url.getValue(),
-            ),
-            child: Text("把百度的url改成谷歌的url"),
+          MaterialButton(
+            onPressed: () {
+              setState(() {
+                jsonObject[0].url = jsonObject[1].url;
+              });
+            },
+            child: Text("设置百度链接为谷歌链接"),
           ),
 
-          /// get name
-          buildDivider(),
+          /// excecute test
           Text(
-            "访问jsonObject[0].name: ",
+            "方法执行能力",
             style: Theme.of(context).textTheme.headline5,
           ),
-          Text(jsonObject[0].name.getValue().runtimeType.toString()),
-          Text(jsonObject[0].name.encodePretty(indent: 4)),
-
-          /// get time
-          buildDivider(),
-          Text(
-            "访问jsonObject[0].time: ",
-            style: Theme.of(context).textTheme.headline5,
+          Column(
+            children: (jsonObject.getValue() as List).map((item) {
+              final itemObject = JsonObject.from(item);
+              return Text(itemObject.name.getValue());
+            }).toList(),
           ),
-          Text(jsonObject[0].time.getValue().runtimeType.toString()),
-          Text(jsonObject[0].time.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject[0].time = 111111111,
-            ),
-            child: Text("修改jsonObject[0].time为111111111"),
-          ),
-
-          /// add key value pairs using dot operator
-          buildDivider(),
-          Text(
-            "访问jsonObject[1].stars: ",
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Text(jsonObject[1].stars.getValue().runtimeType.toString()),
-          Text(jsonObject[1].stars.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject[1].stars = 5,
-            ),
-            child: Text('jsonObject[1].stars = 5'),
-          ),
-
-          /// add key value pairs using add()
-          buildDivider(),
-          Text(
-            "访问jsonObject[0].stars: ",
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Text(jsonObject[0].stars.getValue().runtimeType.toString()),
-          Text(jsonObject[0].stars.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject[0].add("stars", 5),
-            ),
-            child: Text('jsonObject[0].add("stars", 5)'),
-          ),
-
-          /// add `jsonObject[0]` to the normal JsonObject using addAll()
-          buildDivider(),
-          Text(
-            "访问jsonObject: ",
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Text(jsonObject.getValue().runtimeType.toString()),
-          Text(jsonObject.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject.addAll(jsonObject),
-            ),
-            child: Text('jsonObject.addAll(jsonObject[0])'),
-          ),
-
-          /// add mapToBeAdded to the normal JsonObject using addAll()
-          buildDivider(),
-          Text(
-            "访问jsonObject: ",
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Text(jsonObject.getValue().runtimeType.toString()),
-          Text(jsonObject.encodePretty(indent: 4)),
-          ElevatedButton(
-            onPressed: () => setState(
-              () => jsonObject[0].addAll(
-                JsonObject.fromString(mapToBeAdded),
-              ),
-            ),
-            child: Text(
-              'jsonObject[0].addAll'
-              '(JsonObject.fromString(mapToBeAdded))',
-            ),
+          MaterialButton(
+            onPressed: () {
+              setState(() {
+                (jsonObject as JsonObject).apply<List>((list) {
+                  final listCopy = List.from(list);
+                  list.addAll(listCopy);
+                  return list;
+                });
+              });
+            },
+            child: Text("列表长度升为4"),
           ),
         ],
       ),
