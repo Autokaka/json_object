@@ -3,31 +3,27 @@ library json_object;
 import 'dart:convert';
 import 'exception.dart';
 
+export 'dart:convert';
+
 class JsonObject {
   JsonObject._();
 
-  /// Creates a dynamic(actually a JsonObject) according to
-  /// the actual runtimeType of value.
-  static dynamic from(dynamic value) {
-    if (value is JsonObject) return fromJsonObject(value);
-    if (value is String) return fromString(value);
-    if (value is List) return fromList(value);
-    if (value is Map) return fromMap(value);
+  /// Creates a dynamic(actually a JsonObject) from json string.
+  static dynamic decode(String jsonStr) {
     final jsonObject = JsonObject._();
-    return jsonObject.._other = value;
+    final decodeResult = json.decode(jsonStr);
+    if (decodeResult is Map) return fromMap(decodeResult);
+    if (decodeResult is List) return fromList(decodeResult);
+    return jsonObject.._other = decodeResult;
   }
 
-  /// Creates a dynamic(actually a JsonObject) from json string.
-  static dynamic fromString(String jsonStr) {
-    final jsonObject = JsonObject._();
-    try {
-      final decodeResult = json.decode(jsonStr);
-      if (decodeResult is Map) return fromMap(decodeResult);
-      if (decodeResult is List) return fromList(decodeResult);
-      return jsonObject.._other = decodeResult;
-    } catch (e) {
-      return jsonObject.._other = jsonStr;
-    }
+  /// Creates a dynamic(actually a JsonObject) that contains
+  /// all the values of the [otherJsonObject].
+  static dynamic from(JsonObject otherJsonObject) {
+    final value = otherJsonObject.getValue();
+    if (value is Map) return fromMap(value);
+    if (value is List) return fromList(value);
+    return JsonObject._().._other = value;
   }
 
   /// Creates a dynamic(actually a JsonObject) from Map.
@@ -35,11 +31,6 @@ class JsonObject {
 
   /// Creates a dynamic(actually a JsonObject) from List.
   static dynamic fromList(List list) => JsonObject._().._list = List.from(list);
-
-  /// Creates a dynamic(actually a JsonObject) that contains
-  /// all the values of the [otherJsonObject].
-  static dynamic fromJsonObject(dynamic otherJsonObject) =>
-      fromString(JsonObject.encode(otherJsonObject));
 
   Map _map;
   List _list;
@@ -83,7 +74,8 @@ class JsonObject {
         print(JsonObjectException.noSuchKeyException(key: key));
       }
 
-      return JsonObject.from(_map[key])
+      final jsonStr = json.encode(_map[key]);
+      return JsonObject.decode(jsonStr)
         .._listen = (newValue) => _map[key] = newValue;
     }
   }
@@ -96,7 +88,8 @@ class JsonObject {
       );
     }
 
-    return JsonObject.from(getValue()[key])
+    final jsonStr = json.encode(getValue()[key]);
+    return JsonObject.decode(jsonStr)
       .._listen = (newValue) {
         if (getValue() is Map) {
           _map[key] = newValue;
@@ -147,10 +140,6 @@ class JsonObject {
     var encoder = JsonEncoder.withIndent(spaces);
     return encoder.convert(jsonObject.getValue());
   }
-
-  /// Convert this [JsonObject] to a normal [String].
-  static String encode(JsonObject jsonObject) =>
-      json.encode(jsonObject.getValue());
 
   /// Get the value of this [JsonObject].
   ///

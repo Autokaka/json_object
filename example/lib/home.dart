@@ -7,10 +7,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var jsonObject = JsonObject.from('''[{
+  var jsonObject = JsonObject.decode('''[{
     "url": "https://baidu.com",
     "name": "Baidu",
-    "time": 1234567890
+    "time": "1234567890"
   },{
     "url": "https://google.com.hk",
     "name": "Google",
@@ -63,8 +63,8 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.headline5,
           ),
           Column(
-            children: (jsonObject.getValue() as List).map((item) {
-              final itemObject = JsonObject.from(item);
+            children: jsonObject.getValue().map<Text>((item) {
+              final itemObject = JsonObject.fromMap(item);
               return Text(itemObject.name.getValue());
             }).toList(),
           ),
