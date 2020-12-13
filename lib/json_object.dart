@@ -175,30 +175,7 @@ class JsonObject {
   Type get valueRuntimeType => getValue().runtimeType;
 
   void apply<T>(T f(T value)) {
-    final newValue = f?.call(getValue());
-    if (getValue() == newValue) return;
-
-    if (newValue == null) {
-      _map = _list = _other = null;
-      _notify(newValue);
-      return;
-    }
-
-    if (T is Map) {
-      _map = newValue as Map;
-      _list = _other = null;
-      _notify(newValue);
-      return;
-    }
-
-    if (T is List) {
-      _list = newValue as List;
-      _map = _other = null;
-      _notify(newValue);
-      return;
-    }
-
-    _other = newValue;
-    _notify(_other);
+    final newValue = f?.call(getValue<T>());
+    _notify(newValue);
   }
 }
