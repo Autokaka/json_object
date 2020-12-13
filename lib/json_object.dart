@@ -9,9 +9,10 @@ class JsonObject {
   /// Creates a dynamic(actually a JsonObject) according to
   /// the actual runtimeType of value.
   static dynamic from(dynamic value) {
+    if (value is JsonObject) return fromJsonObject(value);
     if (value is String) return fromString(value);
-    if (value is Map) return fromMap(value);
     if (value is List) return fromList(value);
+    if (value is Map) return fromMap(value);
     final jsonObject = JsonObject._();
     return jsonObject.._other = value;
   }
