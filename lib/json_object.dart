@@ -39,7 +39,7 @@ class JsonObject {
   /// Creates a dynamic(actually a JsonObject) that contains
   /// all the values of the [otherJsonObject].
   static dynamic fromJsonObject(dynamic otherJsonObject) =>
-      fromString(otherJsonObject.encode());
+      fromString(JsonObject.encode(otherJsonObject));
 
   Map _map;
   List _list;
