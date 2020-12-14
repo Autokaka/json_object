@@ -1,10 +1,10 @@
-part of json_object;
+import 'package:flutter/material.dart';
 
-class _JsonObjectException {
-  const _JsonObjectException._();
+class JsonObjectException {
+  const JsonObjectException._();
 
   static String standardError(String message) {
-    return "EasyJson: $message";
+    return "JsonObject: $message";
   }
 
   static String noSuchKeyException({
@@ -12,17 +12,6 @@ class _JsonObjectException {
   }) {
     return standardError(
       "NoSuchKeyException. key: $key",
-    );
-  }
-
-  static String listOutOfRangeException({
-    @required int index,
-    @required int length,
-  }) {
-    return standardError(
-      "ListOutOfRangeException. "
-      "Getting index: $index, "
-      "but list length: $length",
     );
   }
 
@@ -48,22 +37,10 @@ class _JsonObjectException {
     );
   }
 
-  static String methodInvokeException({
-    @required String methodName,
-    @required String innerDataType,
-    @required String expectedType,
-  }) {
-    return standardError(
-      "MethodInvokeException. "
-      "Invoking: $methodName in a $innerDataType, "
-      "while this method is available only for $expectedType.",
-    );
-  }
-
   static String uncaughtException({String suggestion = ""}) {
     return standardError(
       "UncaughtException. "
-      "$suggestion. "
+      "$suggestion "
       "Please feel free to give an Issue at: "
       "https://github.com/Autokaka/json_object",
     );
