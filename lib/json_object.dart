@@ -61,15 +61,38 @@ class JsonObject {
     }
 
     if (invocation.isSetter) {
+      if (_map == null && _list != null || _other != null) {
+        throw JsonObjectException.setValueException(
+          innerDataType: valueRuntimeType.toString(),
+          expectedType: 'Map',
+        );
+      }
+
       var key = getMemberName();
       var value = invocation.positionalArguments.first;
       if (value is JsonObject) value = value.getValue();
+      _map ??= {};
       _map[key] = value;
       _notify(_map);
     }
 
     if (invocation.isGetter) {
+      if (_map == null && _list != null || _other != null) {
+        throw JsonObjectException.getValueException(
+          innerDataType: valueRuntimeType.toString(),
+          expectedType: 'Map',
+        );
+      }
+
       var key = getMemberName();
+
+      if (_map == null) {
+        return JsonObject._()
+          .._listen = (newValue) {
+            _map = {key: newValue};
+          };
+      }
+
       if (!_map.keys.contains(key)) {
         print(JsonObjectException.noSuchKeyException(key: key));
       }
